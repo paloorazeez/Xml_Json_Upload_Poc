@@ -9,6 +9,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 @Service
 public class CardService implements ICardService {
@@ -17,16 +18,18 @@ public class CardService implements ICardService {
     private CardRepository cardRepository;
 
     @Override
-    public List<EmployeeCard> getFreeCards() {
+    public EmployeeCard[] getFreeCards() {
 
-        List<EmployeeCard> cardList = new ArrayList<>();
         List<DBEmpCard> freeCards = cardRepository.findFreeCards();
-        if(!CollectionUtils.isEmpty(freeCards))
-        {
-            freeCards.forEach(dc->{
+        EmployeeCard[] cardList = new EmployeeCard[(freeCards != null)?freeCards.size():0];;
+        if(!CollectionUtils.isEmpty(freeCards)) {
+
+            IntStream.range(0, freeCards.size()).forEach(index -> {
                 EmployeeCard card = new EmployeeCard();
-                card.setNumber(dc.getNumber());
-                cardList.add(card);
+                card.setNumber(freeCards.get(index).getNumber());
+                cardList[index] = card;
+
+
             });
         }
 
